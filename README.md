@@ -1,23 +1,22 @@
 # React App Projecct - Search Movies Database
 
+This is a Portfolio project demonstrating my knowledge of React.
 
-# Methodology
+# Specification
 
-Created using react-create-app
+Users of the web application can search the https://www.omdbapi.com/ api for Movies and Series.
 
-# Requirements-
+# Skills Demonstrated
 
-- Search Open Movie Database
-- Filter Search Results by Movie and Series
-- Make a Page to Display a Movie Result (this is react so it is a Component)
-- Make a Page to Display a Series Result (this is react so it is a Component)
-- Add Pagination to the Results
-- Add Routing to the Application
-- Add State Management to store results and parameters - this is implemented using local storage
+- Functional React Components
+- Use of React Hooks UseState and UseEffect
+- Retreiving and displaying data from an API using Fetch
+- Pagination
+- Routing
+- Responsive Web Design
+- Validation
 
-# Dependencies
 
-See package.json
 
 
 

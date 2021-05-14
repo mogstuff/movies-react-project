@@ -12,9 +12,6 @@ body{
    margin:0;
 }
 
-h1{
-    text-align: center;
-}
 
 .detail-wrapper{
     display:grid;
@@ -42,11 +39,12 @@ header{
   
 }
 
-header h1{
+h1{
    margin-bottom:0px;
     color:whitesmoke;
     background-color: royalblue;  
     opacity: 80%;
+    text-align: center;
 }
 
 main{
