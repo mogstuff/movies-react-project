@@ -32,7 +32,9 @@ function ViewMovie() {
     });
 
     return (
-        <div>
+   
+   <div id="view-movie-wrapper">
+
 
             { Object.keys(movie).length < 1 &&
                 <div>... loading data</div>
@@ -40,8 +42,12 @@ function ViewMovie() {
 
             { Object.keys(movie).length > 0 &&
 
-                <div>
-                    <h1>{movie.Title}</h1>
+                <div className="detail-wrapper">
+                    <header>
+                    <h1>{movie.Title}</h1>  
+                    </header>
+                    <main id="movie-details-container" className="detail-view">
+                        <section id="movie-details">
                     <h4>Genre: {movie.Genre}</h4>
                     <h5>Year: {movie.Year}</h5>
                     <h5>Type: {movie.Type}</h5>
@@ -49,8 +55,12 @@ function ViewMovie() {
                     <h5>Director: {movie.Director}</h5>
                     <h5>Rated: {movie.Rated}</h5>
                     <h5>Runtime: {movie.Runtime}</h5>
-                    <div>{movie.Plot}</div>
+                    <div className="plot">{movie.Plot}</div>
+                    </section>
+                    <section className="movie-img">
                     <img src={movie.Poster} alt='movie'></img>
+                    </section>
+                    </main>
                 </div>
             }
 

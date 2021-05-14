@@ -4,25 +4,22 @@ import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 
 function SearchForm() {
 
-    const [searchValue, setSearchValue] = useState( localStorage.getItem('lastSearchValue') || '');
-    const [omdbType, setOmdbType] = useState('');
+    const [searchValue, setSearchValue] = useState(localStorage.getItem('lastSearchValue') || '');
+    const [omdbType, setOmdbType] = useState(localStorage.getItem('omdbType') || '');
     const [searchValueError, setSearchValueError] = useState({});
-    const [movies, setMovies] = useState( JSON.parse(localStorage.getItem('movieList')) || []);
+    const [movies, setMovies] = useState(JSON.parse(localStorage.getItem('movieList')) || []);
     let [pageNumber, setPageNumber] = useState(1);
-    const [totalResults, setTotalResults] = useState( localStorage.getItem('totalResults') || 0);
-    const [totalPages, setTotalPages] = useState( localStorage.getItem('totalPages') || 0);
-
-
+    const [totalResults, setTotalResults] = useState(localStorage.getItem('totalResults') || 0);
+    const [totalPages, setTotalPages] = useState(localStorage.getItem('totalPages') || 0);
 
     useEffect(() => {
-        localStorage.setItem('lastSearchValue', searchValue);      
+        localStorage.setItem('lastSearchValue', searchValue);
         localStorage.setItem('movieList', JSON.stringify(movies));
         localStorage.setItem('totalResults', totalResults);
         localStorage.setItem('totalPages', totalPages);
+        localStorage.setItem('omdbType', omdbType);
 
     }, [searchValue, movies]);
-
-
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -50,9 +47,9 @@ function SearchForm() {
         return isValid;
     }
 
-    const getMovieRequest = async () => {      
+    const getMovieRequest = async () => {
 
-        const apiKey = process.env.REACT_APP_OMDBAPI_KEY;      
+        const apiKey = process.env.REACT_APP_OMDBAPI_KEY;
 
         let url = `http://www.omdbapi.com/?s=${searchValue}&apikey=${apiKey}`;
 
@@ -63,13 +60,13 @@ function SearchForm() {
 
         if (pageNumber > 1) {
             url += `&page=${pageNumber}`;
-        }     
+        }
 
         const response = await fetch(url);
         const responseJson = await response.json();
 
         if (responseJson.Search) {
-          
+
             setMovies(responseJson.Search);
             setTotalResults(responseJson.totalResults);
 
@@ -77,18 +74,20 @@ function SearchForm() {
                 let numberOfPages = Math.round(responseJson.totalResults / 10);
                 setTotalPages(numberOfPages);
             }
+
+            document.getElementById('results-wrapper').scrollIntoView({ behavior: "smooth" });
         }
 
     };
 
-    const updateOmdbType = (omdbType) => {       
+    const updateOmdbType = (omdbType) => {
         setOmdbType(omdbType);
     }
 
     const previousPage = () => {
-       
+
         if (pageNumber > 1) {
-            setPageNumber(pageNumber-=1);
+            setPageNumber(pageNumber -= 1);
             getMovieRequest();
         }
     }
@@ -96,56 +95,56 @@ function SearchForm() {
     const nextPage = () => {
 
         if (totalResults > 10 && pageNumber <= totalPages) {
-         
-            setPageNumber(pageNumber+=1);
+
+            setPageNumber(pageNumber += 1);
             getMovieRequest();
         }
     }
 
     return (
 
-        <div>
+        <div id="search-form-container">
 
-            <form onSubmit={handleSubmit}>
+            <form id="search-form" onSubmit={handleSubmit}>
+
                 <input type="text" name="search_txt"
                     id="search_txt"
                     placeholder="search movies...."
                     value={searchValue}
                     onChange={(e) => setSearchValue(e.target.value)}
                 />
-                <div>
-                    <p>Filter By Type:</p>
-                    <ul>
-                        <li>
+                <div id="type-filter-wrapper">
+                    <div id="filter-text">Filter By Type:</div>
+                    
+                    <div id="radio-btn-movie">
                             <input type="radio"
+                                className="radio-btn"
                                 id="typeMovie"
                                 name="type"
                                 value="movie"
                                 onChange={(e) => updateOmdbType(e.target.value)}
+                                checked={omdbType === "movie"}
+
                             /><label htmlFor="typeMovie"> Movie</label>
-                        </li>
-                        <li>
+                      </div>
+
+                      <div id="radio-btn-series">
                             <input type="radio"
+                                className="radio-btn"
                                 id="typeSeries"
                                 name="type"
                                 value="series"
+                                checked={omdbType === "series"}
+
                                 onChange={(e) => updateOmdbType(e.target.value)}
                             /><label htmlFor="typeMovie"> Series</label>
-                        </li>
-                        <li>
-                            <input type="radio"
-                                id="typeEpisode"
-                                name="type"
-                                value="episode"
-                                onChange={(e) => updateOmdbType(e.target.value)}
-                            /><label htmlFor="typeMovie"> Episode</label>
-                        </li>
-                    </ul>
+                            </div>
+                       
                 </div>
 
-                <input type="submit" value="Submit" />
+                <input className="submit-btn" type="submit" value="Submit" />
 
-                <div>
+                <div id="error-wrapper">
                     {Object.keys(searchValueError).map((key) => {
                         return <div key="{key}" style={{ color: "red" }}>{searchValueError[key]}</div>
                     })}
@@ -153,30 +152,41 @@ function SearchForm() {
 
             </form>
 
-            <div>
-                <h3>Total Results {totalResults}</h3>
-                <h4>Page Number: {pageNumber}</h4>
-                <h4>Total Pages: {totalPages}</h4>
+            <div id="results-wrapper">
 
-                <button onClick={previousPage} style={{ marginLeft: "28%" }}>Previous Page</button>
-                <button onClick={nextPage} style={{ marginLeft: "0%" }}>Next Page &gt; &gt;</button>
 
-                { movies.map((movie, index) => (
-
-                    <div key={movie.imdbID} className='movie-wrapper'>                       
-                       <Link to={`/movies/${movie.imdbID}`}><h4>Title: {movie.Title}</h4></Link>                        
-                 
-                        <h5>Year: {movie.Year}</h5>
-                        <h5>Type: {movie.Type}</h5>
-                        <img src={movie.Poster} alt='movie'></img>
+                {movies.length > 0 &&
+                    <div className="results-headers">
+                        <div>Total Results: {totalResults}</div>
+                        <div>Page Number: {pageNumber}</div>
+                        <div>Total Pages: {totalPages}</div>
                     </div>
-                ))}
+                }
+
+                {movies.length > 0 &&
+                    <div id="paging-wrapper">
+                        <button className="page-btn" onClick={previousPage} style={{ marginLeft: "28%" }}>Previous Page</button>
+                        <button className="page-btn" onClick={nextPage} style={{ marginLeft: "0%" }}>Next Page &gt; &gt;</button>
+                    </div>
+                }
+
+
+                <div id="results-data-container">
+                    {movies.map((movie, index) => (
+
+                        <div key={movie.imdbID} className='movie-wrapper'>
+                            <Link to={`/${movie.Type}/${movie.imdbID}`}><h4>Title: {movie.Title}</h4></Link>
+
+                            <h5>Year: {movie.Year}</h5>
+                            <h5>Type: {movie.Type}</h5>
+                            <img src={movie.Poster} alt='movie' className="movie-poster-small"></img>
+                        </div>
+                    ))}
+                </div>
 
             </div>
         </div>
     );
-
-
 }
 
 
