@@ -1,4 +1,9 @@
+import React from 'react';
 import './App.css';
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import Movies from './components/Movies';
+import ViewMovie from './components/ViewMovie';
+
 
 function App() {
   return (
@@ -9,6 +14,14 @@ function App() {
          <p>Search for Movies, Series and Episodes</p>
        </section>
        <section id="searchMoviesForm">
+
+       <Router>
+       <Route exact path="/" component={Movies}/>
+
+       <Route path="/movies/:imdbID">
+          <ViewMovie />
+        </Route>
+</Router>
 
        </section>
       </main>
